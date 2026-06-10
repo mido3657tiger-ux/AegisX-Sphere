@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from 'react';
+
+// محاكاة بصرية متطورة للوحة تحكم أمنية عالمية تنافس منصات BAS الدولية
+export default function App() {
+  const [systemStatus, setSystemStatus] = useState("OPERATIONAL");
+  const [activeExploits, setActiveExploits] = useState([]);
+  const [phishingHits, setPhishingHits] = useState([]);
+  const [logs, setLogs] = useState([]);
+
+  // توليد بيانات مراقبة حية حركية لإبهار الزوار وجذب المستثمرين
+  useEffect(() => {
+    const mockEvents = [
+      "[*] Sentinel HIDS initialized on Core-Node-01",
+      "[+] Memory Execution Space Allocated safely at 0x7FFE01",
+      "[🚨 ALERT] Attempted Process Hollowing detected in PID: 4102",
+      "[!] Phishing vector initialized for target Microsoft Domain",
+      "[🚨 MITIGATED] Unauthorized connection dropped via Auto-Response"
+    ];
+
+    const interval = setInterval(() => {
+      const randomEvent = mockEvents[Math.floor(Math.random() * mockEvents.length)];
+      setLogs(prev => [ `[${new Date().toLocaleTimeString()}] ${randomEvent}`, ...prev.slice(0, 14) ]);
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const triggerMockAttack = () => {
+    const id = Math.floor(1000 + Math.random() * 9000);
+    const newAttack = { id: `ATK-${id}`, target: "192.168.1.105:445", type: "SMB_Remote_Code_Exec", status: "RUNNING" };
+    setActiveExploits(prev => [newAttack, ...prev]);
+    setLogs(prev => [`[${new Date().toLocaleTimeString()}] [⚔️ ATTACK LAUNCHED] Executing SMB Exploit Matrix on target node.`, ...prev]);
+  };
+
+  const triggerMockPhish = () => {
+    const id = Math.floor(1000 + Math.random() * 9000);
+    const newHit = { id: `FISH-${id}`, target: "victim_exec@target_corp.com", vector: "MFA_Bypass_Portal", status: "TOKEN_HARVESTED" };
+    setPhishingHits(prev => [newHit, ...prev]);
+    setLogs(prev => [`[${new Date().toLocaleTimeString()}] [🎣 PHISHING HIT] Active credential session harvested via dynamic proxy.`, ...prev]);
+  };
+
+  return (
+    <div style={{ backgroundColor: '#050b14', color: '#00ffcc', fontFamily: 'monospace', minHeight: '100vh', padding: '20px' }}>
+      {/* الـ Header الرئيسي للمنصة */}
+      <header style={{ borderBottom: '2px solid #00ffcc', paddingBottom: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: '24px', textShadow: '0 0 10px #00ffcc' }}>🛡️ AEGISX-SPHERE // CYBER TACTICAL COMMAND</h1>
+        <div>
+          STATUS: <span style={{ color: '#00ff00', fontWeight: 'bold', textShadow: '0 0 8px #00ff00' }}>{systemStatus}</span>
+        </div>
+      </header>
+
+      {/* أزرار التحكم والتشغيل التفاعلية للوحة التحكم */}
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
+        <button onClick={triggerMockAttack} style={{ backgroundColor: '#ff0055', color: '#fff', border: 'none', padding: '12px 24px', cursor: 'pointer', fontWeight: 'bold', borderRadius: '4px', boxShadow: '0 0 10px #ff0055' }}>
+          ⚔️ LAUNCH AUTONOMOUS EXPLOIT
+        </button>
+        <button onClick={triggerMockPhish} style={{ backgroundColor: '#0067b8', color: '#fff', border: 'none', padding: '12px 24px', cursor: 'pointer', fontWeight: 'bold', borderRadius: '4px', boxShadow: '0 0 10px #0067b8' }}>
+          🎣 DEPLOY AI PHISHING MATRIX
+        </button>
+      </div>
+
+      {/* لوحات المراقبة وتحليل الشبكة */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        
+        {/* وحدة الاختراق والحقن */}
+        <div style={{ border: '1px solid #ff0055', padding: '15px', backgroundColor: '#0a0f1d', borderRadius: '6px' }}>
+          <h3 style={{ color: '#ff0055', marginTop: 0, borderBottom: '1px solid #ff0055', paddingBottom: '5px' }}>⚔️ Red Team Active Exploits</h3>
+          {activeExploits.length === 0 ? <p style={{ color: '#666' }}>No active offensive matrices running.</p> : 
+            activeExploits.map(atk => (
+              <div key={atk.id} style={{ borderBottom: '1px solid #222', padding: '5px 0', fontSize: '13px' }}>
+                [{atk.id}] Target: {atk.target} | Vector: <span style={{ color: '#ff0055' }}>{atk.type}</span> | Status: {atk.status}
+              </div>
+            ))
+          }
+        </div>
+
+        {/* وحدة الصيد والهندسة الاجتماعية */}
+        <div style={{ border: '1px solid #0067b8', padding: '15px', backgroundColor: '#0a0f1d', borderRadius: '6px' }}>
+          <h3 style={{ color: '#0067b8', marginTop: 0, borderBottom: '1px solid #0067b8', paddingBottom: '5px' }}>🎣 Phishing & Credential Lab</h3>
+          {phishingHits.length === 0 ? <p style={{ color: '#666' }}>Awaiting landing page traffic telemetry...</p> : 
+            phishingHits.map(hit => (
+              <div key={hit.id} style={{ borderBottom: '1px solid #222', padding: '5px 0', fontSize: '13px' }}>
+                [{hit.id}] Intercepted: {hit.target} | <span style={{ color: '#00ff00' }}>{hit.status}</span>
+              </div>
+            ))
+          }
+        </div>
+
+      </div>
+
+      {/* شاشة الـ Terminal الحية والمسؤولة عن كشف التسلل وسجلات الحماية */}
+      <div style={{ border: '1px solid #00ffcc', padding: '15px', backgroundColor: '#02060c', borderRadius: '6px' }}>
+        <h3 style={{ color: '#00ffcc', marginTop: 0, borderBottom: '1px solid #00ffcc', paddingBottom: '5px' }}>🚨 Live Kernel HIDS & Orchestration Logs Terminal</h3>
+        <div style={{ maxHeight: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '14px', color: '#a0aec0' }}>
+          {logs.length === 0 ? <div style={{ color: '#444' }}>[+] Initializing AegisX Neural Logic Matrix Pipeline...</div> : 
+            logs.map((log, index) => <div key={index} style={{ whiteSpace: 'pre-wrap' }}>{log}</div>)
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
