@@ -1,0 +1,60 @@
+import os
+import time
+import sys
+import hashlib
+from typing import Dict
+
+class SentinelHIDS:
+    def __init__(self, watch_directory: str):
+        self.watch_directory = watch_directory
+        self.file_manifest: Dict[str, str] = {}
+        print(f"[*] Sentinel HIDS initialized. Monitoring directory: {watch_directory}")
+
+    def generate_sha256(self, file_path: str) -> str:
+        sha256_hash = hashlib.sha256()
+        try:
+            with open(file_path, "rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    sha256_hash.update(byte_block)
+            return sha256_hash.hexdigest()
+        except (FileNotFoundError, PermissionError):
+            return ""
+
+    def build_initial_baseline(self):
+        print("[*] Compiling secure architectural integrity baseline...")
+        for root, _, files in os.walk(self.watch_directory):
+            for file in files:
+                full_path = os.path.join(root, file)
+                file_hash = self.generate_sha256(full_path)
+                if file_hash:
+                    self.file_manifest[full_path] = file_hash
+        print(f"[+] Baseline secure. Protecting {len(self.file_manifest)} system artifacts.")
+
+    def monitor_integrity_loop(self):
+        while True:
+            time.sleep(3)
+            current_files = set()
+            for root, _, files in os.walk(self.watch_directory):
+                for file in files:
+                    full_path = os.path.join(root, file)
+                    current_files.add(full_path)
+                    current_hash = self.generate_sha256(full_path)
+                    
+                    if full_path not in self.file_manifest:
+                        print(f"[🚨 HIGH ALERT] Unauthorized File Injected: {full_path}")
+                        self.file_manifest[full_path] = current_hash
+                    elif current_hash != self.file_manifest[full_path]:
+                        print(f"[🚨 CRITICAL ALERT] Core File Modification Detected: {full_path}")
+                        self.file_manifest[full_path] = current_hash
+
+            deleted_files = set(self.file_manifest.keys()) - current_files
+            for deleted_file in deleted_files:
+                print(f"[🚨 WARNING] Monitored Asset Deleted or Purged: {deleted_file}")
+                del self.file_manifest[deleted_file]
+
+if __name__ == "__main__":
+    monitor_path = "/tmp" if sys.platform != "win32" else "C:\\Windows\\Temp"
+    agent = SentinelHIDS(watch_directory=monitor_path)
+    agent.build_initial_baseline()
+    agent.monitor_integrity_loop()
+
